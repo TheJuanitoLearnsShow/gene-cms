@@ -1,22 +1,22 @@
 import org.zwobble.mammoth.DocumentConverter
 import java.io.File
 import kotlin.io.path.Path
-import kotlin.io.path.exists
-import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
 import kotlin.io.path.pathString
 
 object WordProvider {
-    fun ConvertFile(inputFilePath: String, outputFilePath: String) {
+    fun convertFile(inputFilePath: String, outputFilePath: String) {
         val converter =  DocumentConverter()
+            .addStyleMap("p[style-name='Code'] => pre")
         val result = converter.convertToHtml( File(inputFilePath));
         val html = result.value; // The generated HTML
         val warnings = result.warnings; // Any warnings during conversion
         val outputFile = File(outputFilePath)
         outputFile.writeText (html)
     }
-    fun OutputToFolder(inputFilePath: String, outputBaseFolder: String) {
+    fun outputToFolder(inputFilePath: String, outputBaseFolder: String) {
         val inputPath = Path(inputFilePath)
-        val filename = inputPath.fileName.pathString
+        val filename = inputPath.nameWithoutExtension
         val orgFolder = filename.substringBefore(' ')
         val finalFileName = "Page " + filename.substringAfter(' ')
 
@@ -28,6 +28,6 @@ object WordProvider {
         if (!outputFolderFileEntry.exists()) {
             outputFolderFileEntry.mkdirs()
         }
-        return ConvertFile(inputFilePath, outputFolder.resolve("main.html").pathString)
+        return convertFile(inputFilePath, outputFolder.resolve("main.html").pathString)
     }
 }
