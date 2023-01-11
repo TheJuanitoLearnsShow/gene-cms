@@ -1,6 +1,7 @@
 namespace WordToHtml
 open Mammoth
 open System.IO
+open System.Linq
 
 module WordConverterProvider =
     let CreateEngine () =
@@ -18,3 +19,18 @@ module WordConverterProvider =
         let converter = CreateEngine() |> ConvertFile 
         for (inputFile,outputFile) in (inputOutputPairs |> Seq.toList) do
             converter inputFile outputFile
+
+    // files must be named "yyyy-MM-dd <title to use>.docx"
+    let ConvertFilesToPages (wordInputFiles:(string) seq) (outputBaseFolder:string) =
+        let inputOutputPairs =
+            wordInputFiles
+            |> Seq.map (fun f -> (f,Path.GetFileName))
+            |> Seq.map (fun (input,filename: string) ->
+                let orgFolder =
+                    filename.Split(' ')[0]
+                let finalFileName =
+                    "Page " + filename.Split(' ').Last()
+                Path.Combine(outputBaseFolder, orgFolder, finalFileName, "main.html")
+
+            )
+        ConvertFiles inputOutputPairs

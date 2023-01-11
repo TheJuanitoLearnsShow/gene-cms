@@ -25,6 +25,9 @@ module DirectoryFileEntriesProvider =
                 return (pageRelativePath, sectionName, contents)
             }
         )
+    // Expects a page to be a folder (named "Page xxxxxx") that has multiple html or misc files
+    //  and each of those files to be named as the html id of the html element
+    //  to replace in the output page
     let GetPageSections (baseInputFolder:string)  =
         let pageFolders = Directory.EnumerateDirectories(baseInputFolder, "Page *",SearchOption.AllDirectories)
         pageFolders

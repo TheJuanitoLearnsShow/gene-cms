@@ -27,5 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\transformers\WordToHtml\WordToHtml\WordToHtml.fsproj" />
+    <ProjectReference Include="..\transformers\HtmlPartsToSite\HtmlPartsToSite\HtmlPartsToSite.fsproj" />
   </ItemGroup>
 </Project>

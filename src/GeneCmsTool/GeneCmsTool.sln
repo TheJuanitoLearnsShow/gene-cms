@@ -3,11 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 25.0.1704.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneCmsTool", "GeneCmsTool\GeneCmsTool.csproj", "{B73AE1E1-6B85-4E74-B86F-F6F115C6C520}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WordToHtml", "transformers\WordToHtml\WordToHtml\WordToHtml.fsproj", "{5CE97484-49A0-4E27-838A-C7EE0BD08050}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GeneCms.Tests", "GeneCms.Tests\GeneCms.Tests.fsproj", "{FD1CBD46-5456-4F83-8353-0FFA490ABDF8}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GeneCmsTool", "GeneCmsTool\GeneCmsTool.fsproj", "{CC3E0433-C65A-4550-9252-958E9E3DF21B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2-Transformers", "2-Transformers", "{FF51114A-374A-44A6-B467-16CAEC57E9F1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7-Tests", "7-Tests", "{8E7B2D4A-5094-4EE5-97F4-A4DF67B8FB2B}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "HtmlPartsToSite", "transformers\HtmlPartsToSite\HtmlPartsToSite\HtmlPartsToSite.fsproj", "{8BE62CC8-856B-49E3-BEFE-7EE8235E70A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +21,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B73AE1E1-6B85-4E74-B86F-F6F115C6C520}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B73AE1E1-6B85-4E74-B86F-F6F115C6C520}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B73AE1E1-6B85-4E74-B86F-F6F115C6C520}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B73AE1E1-6B85-4E74-B86F-F6F115C6C520}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5CE97484-49A0-4E27-838A-C7EE0BD08050}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5CE97484-49A0-4E27-838A-C7EE0BD08050}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CE97484-49A0-4E27-838A-C7EE0BD08050}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,11 +29,24 @@ Global
 		{FD1CBD46-5456-4F83-8353-0FFA490ABDF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD1CBD46-5456-4F83-8353-0FFA490ABDF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD1CBD46-5456-4F83-8353-0FFA490ABDF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC3E0433-C65A-4550-9252-958E9E3DF21B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC3E0433-C65A-4550-9252-958E9E3DF21B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC3E0433-C65A-4550-9252-958E9E3DF21B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC3E0433-C65A-4550-9252-958E9E3DF21B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BE62CC8-856B-49E3-BEFE-7EE8235E70A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BE62CC8-856B-49E3-BEFE-7EE8235E70A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BE62CC8-856B-49E3-BEFE-7EE8235E70A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BE62CC8-856B-49E3-BEFE-7EE8235E70A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {815ACCE0-C45F-4EE0-A9BE-A8C542A8C9E0}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5CE97484-49A0-4E27-838A-C7EE0BD08050} = {FF51114A-374A-44A6-B467-16CAEC57E9F1}
+		{FD1CBD46-5456-4F83-8353-0FFA490ABDF8} = {8E7B2D4A-5094-4EE5-97F4-A4DF67B8FB2B}
+		{8BE62CC8-856B-49E3-BEFE-7EE8235E70A2} = {FF51114A-374A-44A6-B467-16CAEC57E9F1}
 	EndGlobalSection
 EndGlobal
