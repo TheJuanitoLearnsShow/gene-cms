@@ -7,7 +7,7 @@ import kotlin.io.path.pathString
 object WordProvider {
     fun convertFile(inputFilePath: String, outputFilePath: String) {
         val converter =  DocumentConverter()
-            .addStyleMap("p[style-name='Code'] => pre")
+            .addStyleMap("p[style-name='Code'] => pre:separator('\\n')")
         val result = converter.convertToHtml( File(inputFilePath));
         val html = result.value; // The generated HTML
         val warnings = result.warnings; // Any warnings during conversion
