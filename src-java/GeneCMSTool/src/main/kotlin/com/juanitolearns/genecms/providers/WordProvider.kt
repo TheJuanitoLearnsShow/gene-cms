@@ -1,3 +1,5 @@
+package com.juanitolearns.genecms.providers
+
 import org.zwobble.mammoth.DocumentConverter
 import java.io.File
 import kotlin.io.path.Path

@@ -1,16 +1,17 @@
-import com.juanitolearns.genecms.providers.WordProvider
+package com.juanitolearns.genecms
+
 import org.junit.jupiter.api.Test
+
+import org.junit.jupiter.api.Assertions.*
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
-class CmsToolTest {
-
+class PageComposerTest {
     private val blogContentsFolderPath = Path( System.getenv("PersonalBlogContents") ?: "/")
     @Test
-    fun convertFile() {
-        WordProvider.outputToFolder(
-            blogContentsFolderPath.resolve("Input/blog-entries/2023-01-10 Add Sql Server Database Projects To CI.docx").pathString,
+    fun composePages() {
+        PageComposer.composePages(blogContentsFolderPath.resolve( "Templates/doc.html").pathString,
             blogContentsFolderPath.resolve("Output/blog-entries").pathString
-        )
+            )
     }
 }
