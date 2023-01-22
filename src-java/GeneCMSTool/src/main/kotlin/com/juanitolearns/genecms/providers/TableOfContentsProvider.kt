@@ -1,10 +1,9 @@
 package com.juanitolearns.genecms.providers
 
 import java.io.File
-import kotlin.io.path.Path
-import kotlin.io.path.invariantSeparatorsPathString
-import kotlin.io.path.walk
-
+import kotlinx.html.*
+import kotlinx.html.stream.appendHTML
+import java.io.PrintWriter
 
 object TableOfContentsProvider {
 
@@ -48,13 +47,34 @@ object TableOfContentsProvider {
         return toc
     }
 
-    fun outputToFolder(inputFolderPath: String, outputFileName: String): TableOfContents {
+    fun outputToFolder(inputFolderPath: String): TableOfContents {
         val inputFolder = File(inputFolderPath)
         val tocRoot = TableOfContents(inputFolder.nameWithoutExtension, mutableListOf())
         inputFolder.walk()
             .filter { p -> p.name == "index.html" }
             .forEach { p -> addToToc(tocRoot, p.parent.replace(inputFolderPath, "")) }
         return tocRoot
+
+    }
+    fun tocEntryToHtml(entry: TableOfContents, writer: TagConsumer<PrintWriter>) {
+        writer.li {
+            text(entry.heading)
+            entry.children.forEach {
+                c -> tocEntryToHtml(c, writer)
+            }
+        }
+    }
+    fun outputToHtml(toc: TableOfContents, outputFileName: String){
+        val writer = File(outputFileName).printWriter()
+        val htmlWriter = writer.appendHTML()
+        htmlWriter.ul {
+            tocEntryToHtml(toc, htmlWriter)
+        }
+        writer.close()
+    }
+    fun outputToFolder(inputFolderPath: String, outputFileName: String) {
+        val tocRoot = outputToFolder(inputFolderPath)
+        outputToHtml(tocRoot, outputFileName)
 
     }
 }

@@ -23,6 +23,11 @@
             <id>mavenCentral</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
+        <repository>
+            <id>kotlinx-html</id>
+            <name>kotlinx-html</name>
+            <url>https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven</url>
+        </repository>
     </repositories>
 
     <build>
@@ -98,7 +103,11 @@
             <artifactId>jsoup</artifactId>
             <version>1.15.3</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-html-jvm</artifactId>
+            <version>0.8.0</version>
+        </dependency>
     </dependencies>
 
 </project>
