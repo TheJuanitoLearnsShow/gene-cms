@@ -27,13 +27,30 @@ object TableOfContentsProvider {
         return rootNode
     }
 
-    data class TableOfContents(val heading: String, val children: MutableList<TableOfContents>)
+    data class TableOfContents(val heading: String, val children: MutableList<TableOfContents>,
+                               val parent: TableOfContents?) {
+        val path: String
+            get() {
+                return (parent?.path ?: "") + '/' + displayName
+            }
+
+        val isPage: Boolean
+            get() {
+                return heading.startsWith("Page ")
+            }
+
+        val displayName: String
+            get() {
+                return if (isPage) heading.substringAfter(' ') else heading;
+            }
+    }
+
 
     private fun addToChildren(currToc: TableOfContents, pathPart: String): TableOfContents {
         val tocEntry = (currToc.children.firstOrNull { t -> t.heading == pathPart })
 
         return if (tocEntry == null) {
-            val newTocEntry = TableOfContents(pathPart, mutableListOf())
+            val newTocEntry = TableOfContents(pathPart, mutableListOf(), currToc)
             currToc.children.add(newTocEntry)
             newTocEntry
         } else
@@ -49,22 +66,28 @@ object TableOfContentsProvider {
 
     fun outputToFolder(inputFolderPath: String): TableOfContents {
         val inputFolder = File(inputFolderPath)
-        val tocRoot = TableOfContents(inputFolder.nameWithoutExtension, mutableListOf())
+        val tocRoot = TableOfContents(inputFolder.nameWithoutExtension, mutableListOf(), null)
         inputFolder.walk()
             .filter { p -> p.name == "index.html" }
             .forEach { p -> addToToc(tocRoot, p.parent.replace(inputFolderPath, "")) }
         return tocRoot
 
     }
-    fun tocEntryToHtml(entry: TableOfContents, writer: TagConsumer<PrintWriter>) {
+    private fun tocEntryToHtml(entry: TableOfContents, writer: TagConsumer<PrintWriter>) {
         writer.li {
-            text(entry.heading)
+            if (entry.isPage) {
+                a(entry.path) {
+                    text(entry.displayName)
+                }
+            } else {
+                text(entry.displayName)
+            }
             entry.children.forEach {
                 c -> tocEntryToHtml(c, writer)
             }
         }
     }
-    fun outputToHtml(toc: TableOfContents, outputFileName: String){
+    private fun outputToHtml(toc: TableOfContents, outputFileName: String){
         val writer = File(outputFileName).printWriter()
         val htmlWriter = writer.appendHTML()
         htmlWriter.ul {
