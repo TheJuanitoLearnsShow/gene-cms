@@ -1,49 +1,17 @@
 package com.juanitolearns.genecms.providers
 
-import java.io.File
-import kotlinx.html.*
+import kotlinx.html.TagConsumer
+import kotlinx.html.a
+import kotlinx.html.li
 import kotlinx.html.stream.appendHTML
+import kotlinx.html.stream.createHTML
+import kotlinx.html.ul
+import java.io.File
 import java.io.PrintWriter
+import java.io.StringWriter
+
 
 object TableOfContentsProvider {
-
-    data class FileNode(val name: String, val children: MutableList<FileNode>)
-
-    fun createFileTree(root: File): FileNode {
-        val rootNode = FileNode(root.name, mutableListOf())
-        val queue = mutableListOf(Pair(root, rootNode))
-
-        while (queue.isNotEmpty()) {
-            val (file, parentNode) = queue.removeAt(0)
-            file.listFiles()?.forEach { childFile ->
-                val childNode = FileNode(childFile.name, mutableListOf())
-                parentNode.children.add(childNode)
-                if (childFile.isDirectory) {
-                    queue.add(Pair(childFile, childNode))
-                }
-            }
-        }
-
-        return rootNode
-    }
-
-    data class TableOfContents(val heading: String, val children: MutableList<TableOfContents>,
-                               val parent: TableOfContents?) {
-        val path: String
-            get() {
-                return (parent?.path ?: "") + '/' + displayName
-            }
-
-        val isPage: Boolean
-            get() {
-                return heading.startsWith("Page ")
-            }
-
-        val displayName: String
-            get() {
-                return if (isPage) heading.substringAfter(' ') else heading;
-            }
-    }
 
 
     private fun addToChildren(currToc: TableOfContents, pathPart: String): TableOfContents {
@@ -64,12 +32,12 @@ object TableOfContentsProvider {
         return toc
     }
 
-    fun outputToFolder(inputFolderPath: String): TableOfContents {
+    fun mapToToc(inputFolderPath: String): TableOfContents {
         val inputFolder = File(inputFolderPath)
         val tocRoot = TableOfContents(inputFolder.nameWithoutExtension, mutableListOf(), null)
         inputFolder.walk()
-            .filter { p -> p.name == "index.html" }
-            .forEach { p -> addToToc(tocRoot, p.parent.replace(inputFolderPath, "")) }
+            .filter { p -> p.name.startsWith("Page ") }
+            .forEach { p -> addToToc(tocRoot, p.path.replace(inputFolderPath, "")) }
         return tocRoot
 
     }
@@ -95,9 +63,17 @@ object TableOfContentsProvider {
         }
         writer.close()
     }
-    fun outputToFolder(inputFolderPath: String, outputFileName: String) {
-        val tocRoot = outputToFolder(inputFolderPath)
+    fun mapToHtmlFile(inputFolderPath: String, outputFileName: String) {
+        val tocRoot = mapToToc(inputFolderPath)
         outputToHtml(tocRoot, outputFileName)
-
+    }
+    fun mapToHtmlString(toc: TableOfContents) : String {
+        val strWriter = StringWriter()
+        val writer = PrintWriter(strWriter).appendHTML()
+        writer.ul {
+                tocEntryToHtml(toc, writer)
+            }
+        strWriter.flush()
+        return strWriter.toString()
     }
 }

@@ -1,11 +1,21 @@
 package com.juanitolearns.genecms
 
+import com.juanitolearns.genecms.providers.TableOfContents
+import com.juanitolearns.genecms.providers.TableOfContentsProvider
+import kotlinx.html.TABLE
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.File
 import kotlin.io.path.Path
+import kotlin.io.path.pathString
 
-object PageComposer {
+class PageComposer {
+
+    private fun composeTemplate(htmlTemplate:String, toc: String): String {
+        val doc = Jsoup.parse(htmlTemplate)
+        doc.getElementById("toc")?.append(toc)
+        return doc.outerHtml()
+    }
     private fun composePage(htmlTemplate:String, pageFolder: File): String {
         val doc = Jsoup.parse(htmlTemplate)
         pageFolder.walk().filter {f -> f.name != "index.html" && !f.isDirectory}.forEach {
@@ -14,16 +24,26 @@ object PageComposer {
          }
         return doc.outerHtml()
     }
-    private fun pageFolderToHtml(htmlTemplate:String, folderPath: File) {
-        val finalOutputFile = folderPath.resolve("index.html")
-        finalOutputFile.writeText(composePage(htmlTemplate,folderPath))
-    }
-    fun composePages(htmlTemplateFilePath:String, inputFolderPath: String) {
-        val htmlTemplate = File(htmlTemplateFilePath).readText()
-        val pageFolders = File(inputFolderPath).walk().filter {
-            f -> f.isDirectory && f.name.startsWith("Page ")
+    private fun pageFolderToHtml(htmlTemplate:String, toc: TableOfContents, inputBaseFolderPath: File, distBaseFolderPath: File) {
+
+        val outputFolderFileEntry = File(distBaseFolderPath.resolve(toc.path.substringAfter('/')).path)
+        if (!outputFolderFileEntry.exists()) {
+            outputFolderFileEntry.mkdirs()
         }
-        pageFolders.forEach { pageFolder -> pageFolderToHtml(htmlTemplate, pageFolder)}
+
+        val inputPageFolderPath = inputBaseFolderPath.resolve(toc.inputPath.substringAfter('/'))
+        outputFolderFileEntry.resolve("index.html").writeText(composePage(htmlTemplate,inputPageFolderPath))
+    }
+    fun composePages(htmlTemplateFilePath:String, inputFolderPath: String, distFolderPath: String) {
+        val htmlTemplate = File(htmlTemplateFilePath).readText()
+        val toc = TableOfContentsProvider.mapToToc(inputFolderPath)
+//        val pageFolders = File(inputFolderPath).walk().filter {
+//            f -> f.isDirectory && f.name.startsWith("Page ")
+//        }
+        val pageEntries = toc.collectPages()
+        val finalTemplate = composeTemplate(htmlTemplate, TableOfContentsProvider.mapToHtmlString(toc))
+        pageEntries.forEach { tocEntry -> pageFolderToHtml(finalTemplate,  tocEntry,
+            File(inputFolderPath), File(distFolderPath))}
     }
 
     private fun addContent(doc: Document, htmlId: String, html: String) {

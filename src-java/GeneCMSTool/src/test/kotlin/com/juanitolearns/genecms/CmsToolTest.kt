@@ -1,3 +1,5 @@
+package com.juanitolearns.genecms
+
 import com.juanitolearns.genecms.providers.WordProvider
 import org.junit.jupiter.api.Test
 import kotlin.io.path.Path

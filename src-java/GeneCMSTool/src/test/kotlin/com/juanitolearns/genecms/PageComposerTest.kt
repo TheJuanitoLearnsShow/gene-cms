@@ -10,8 +10,10 @@ class PageComposerTest {
     private val blogContentsFolderPath = Path( System.getenv("PersonalBlogContents") ?: "/")
     @Test
     fun composePages() {
-        PageComposer.composePages(blogContentsFolderPath.resolve( "Templates/doc.html").pathString,
-            blogContentsFolderPath.resolve("Output/blog-entries").pathString
+        PageComposer().composePages(blogContentsFolderPath.resolve( "Templates/doc.html").pathString,
+            blogContentsFolderPath.resolve("Output/").pathString,
+            blogContentsFolderPath.resolve("Dist/").pathString
+
             )
     }
 }
