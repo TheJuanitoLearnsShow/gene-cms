@@ -38,4 +38,15 @@ data class TableOfContents(val heading: String, val children: MutableList<TableO
         }
         return result
     }
+    fun cloneEntry(heading: String, newHeading: String): TableOfContents? {
+        val result: MutableList<TableOfContents> = mutableListOf()
+        if (this.heading == heading) {
+            return TableOfContents(newHeading, this.children, null)
+        }
+        for (child in children) {
+            val foundInChild = child.cloneEntry(heading, newHeading)
+            if (foundInChild != null) return foundInChild
+        }
+        return null
+    }
 }

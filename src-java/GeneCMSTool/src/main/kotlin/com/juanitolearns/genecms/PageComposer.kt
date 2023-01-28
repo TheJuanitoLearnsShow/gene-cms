@@ -14,7 +14,7 @@ class PageComposer {
     private fun composeTemplate(htmlTemplate:String, toc: String): String {
         val doc = Jsoup.parse(htmlTemplate)
         val tocHtml = Jsoup.parse(toc) // TODO: li items are being flattened
-        doc.getElementById("toc")?.append(toc)
+        doc.getElementById("toc")?.html(toc)
         return doc.outerHtml()
     }
     private fun composePage(htmlTemplate:String, pageFolder: File): String {
@@ -35,14 +35,16 @@ class PageComposer {
         val inputPageFolderPath = inputBaseFolderPath.resolve(toc.inputPath.substringAfter('/'))
         outputFolderFileEntry.resolve("index.html").writeText(composePage(htmlTemplate,inputPageFolderPath))
     }
-    fun composePages(htmlTemplateFilePath:String, inputFolderPath: String, distFolderPath: String) {
+    fun composePages(htmlTemplateFilePath:String, inputFolderPath: String, distFolderPath: String,
+                     rootForToc: String) {
         val htmlTemplate = File(htmlTemplateFilePath).readText()
         val toc = TableOfContentsProvider.mapToToc(inputFolderPath)
 //        val pageFolders = File(inputFolderPath).walk().filter {
 //            f -> f.isDirectory && f.name.startsWith("Page ")
 //        }
         val pageEntries = toc.collectPages()
-        val finalTemplate = composeTemplate(htmlTemplate, TableOfContentsProvider.mapToHtmlString(toc))
+        val tocRootDisplay = toc.cloneEntry("blog-entries", "Blog Entries")?.collectPages() ?: Lis()
+        val finalTemplate = composeTemplate(htmlTemplate, TableOfContentsProvider.mapToHtmlString(tocRootDisplay))
         pageEntries.forEach { tocEntry -> pageFolderToHtml(finalTemplate,  tocEntry,
             File(inputFolderPath), File(distFolderPath))}
     }

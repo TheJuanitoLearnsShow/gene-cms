@@ -50,8 +50,10 @@ object TableOfContentsProvider {
             } else {
                 text(entry.displayName)
             }
-            entry.children.forEach {
-                c -> tocEntryToHtml(c, writer)
+            writer.ul {
+                entry.children.forEach { c ->
+                    tocEntryToHtml(c, writer)
+                }
             }
         }
     }
@@ -70,9 +72,7 @@ object TableOfContentsProvider {
     fun mapToHtmlString(toc: TableOfContents) : String {
         val strWriter = StringWriter()
         val writer = PrintWriter(strWriter).appendHTML()
-        writer.ul {
                 tocEntryToHtml(toc, writer)
-            }
         strWriter.flush()
         return strWriter.toString()
     }
