@@ -1,11 +1,8 @@
 package com.juanitolearns.genecms.providers
 
-import kotlinx.html.TagConsumer
-import kotlinx.html.a
-import kotlinx.html.li
+import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.stream.createHTML
-import kotlinx.html.ul
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -47,8 +44,10 @@ object TableOfContentsProvider {
                 a(entry.path) {
                     text(entry.displayName)
                 }
-            } else {
-                text(entry.displayName)
+            } else if (entry.parent != null) {
+                h3 {
+                    text(entry.displayName)
+                }
             }
             writer.ul {
                 entry.children.forEach { c ->

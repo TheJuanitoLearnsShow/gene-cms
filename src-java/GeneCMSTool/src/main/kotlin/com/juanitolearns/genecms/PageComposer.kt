@@ -35,16 +35,16 @@ class PageComposer {
         val inputPageFolderPath = inputBaseFolderPath.resolve(toc.inputPath.substringAfter('/'))
         outputFolderFileEntry.resolve("index.html").writeText(composePage(htmlTemplate,inputPageFolderPath))
     }
-    fun composePages(htmlTemplateFilePath:String, inputFolderPath: String, distFolderPath: String,
-                     rootForToc: String) {
+    fun composePages(htmlTemplateFilePath:String, inputFolderPath: String, distFolderPath: String
+                     ) {
         val htmlTemplate = File(htmlTemplateFilePath).readText()
         val toc = TableOfContentsProvider.mapToToc(inputFolderPath)
 //        val pageFolders = File(inputFolderPath).walk().filter {
 //            f -> f.isDirectory && f.name.startsWith("Page ")
 //        }
         val pageEntries = toc.collectPages()
-        val tocRootDisplay = toc.cloneEntry("blog-entries", "Blog Entries")?.collectPages() ?: Lis()
-        val finalTemplate = composeTemplate(htmlTemplate, TableOfContentsProvider.mapToHtmlString(tocRootDisplay))
+//        val tocRootDisplay = toc.cloneEntry("blog-entries", "Blog Entries")?.collectPages() ?: Lis()
+        val finalTemplate = composeTemplate(htmlTemplate, TableOfContentsProvider.mapToHtmlString(toc))
         pageEntries.forEach { tocEntry -> pageFolderToHtml(finalTemplate,  tocEntry,
             File(inputFolderPath), File(distFolderPath))}
     }
