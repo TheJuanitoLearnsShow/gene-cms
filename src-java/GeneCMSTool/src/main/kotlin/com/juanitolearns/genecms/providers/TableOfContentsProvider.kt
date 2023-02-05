@@ -45,16 +45,17 @@ object TableOfContentsProvider {
                     a(entry.path) {
                         text(entry.displayName)
                     }
-                }
-                h3 {
-                    text(entry.displayName)
-                }
-                if (entry.children.isNotEmpty()) {
-                    writer.ul {
-                        entry.children.forEach { c ->
-                            tocEntryToHtml(c, writer)
-                        }
+                } else {
+                    h3 {
+                        text(entry.displayName)
                     }
+                }
+            }
+        }
+        if (entry.children.isNotEmpty()) {
+            writer.ul {
+                entry.children.forEach { c ->
+                    tocEntryToHtml(c, writer)
                 }
             }
         }
