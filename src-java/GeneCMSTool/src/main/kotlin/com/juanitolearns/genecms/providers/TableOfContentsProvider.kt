@@ -39,19 +39,22 @@ object TableOfContentsProvider {
 
     }
     private fun tocEntryToHtml(entry: TableOfContents, writer: TagConsumer<PrintWriter>) {
-        writer.li {
-            if (entry.isPage) {
-                a(entry.path) {
-                    text(entry.displayName)
+        if (entry.parent != null) {
+            writer.li {
+                if (entry.isPage) {
+                    a(entry.path) {
+                        text(entry.displayName)
+                    }
                 }
-            } else if (entry.parent != null) {
                 h3 {
                     text(entry.displayName)
                 }
-            }
-            writer.ul {
-                entry.children.forEach { c ->
-                    tocEntryToHtml(c, writer)
+                if (entry.children.isNotEmpty()) {
+                    writer.ul {
+                        entry.children.forEach { c ->
+                            tocEntryToHtml(c, writer)
+                        }
+                    }
                 }
             }
         }

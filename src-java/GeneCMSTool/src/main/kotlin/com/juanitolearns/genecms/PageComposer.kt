@@ -13,7 +13,6 @@ class PageComposer {
 
     private fun composeTemplate(htmlTemplate:String, toc: String): String {
         val doc = Jsoup.parse(htmlTemplate)
-        val tocHtml = Jsoup.parse(toc) // TODO: li items are being flattened
         doc.getElementById("toc")?.html(toc)
         return doc.outerHtml()
     }
