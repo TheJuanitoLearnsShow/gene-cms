@@ -1,0 +1,180 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Condition": {
+                "actions": {
+                    "For_each": {
+                        "actions": {
+                            "Edit_a_post": {
+                                "inputs": {
+                                    "body": {
+                                        "content": "@{triggerBody()}"
+                                    },
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['blogger_1']['connectionId']"
+                                        }
+                                    },
+                                    "method": "put",
+                                    "path": "/blogs/@{encodeURIComponent('33256684')}/posts/@{encodeURIComponent(items('For_each')?['id'])}"
+                                },
+                                "runAfter": {},
+                                "type": "ApiConnection"
+                            }
+                        },
+                        "foreach": "@body('Posts_Matching_Title')",
+                        "runAfter": {},
+                        "type": "Foreach"
+                    }
+                },
+                "else": {
+                    "actions": {
+                        "Create_post": {
+                            "inputs": {
+                                "body": {
+                                    "content": "@{triggerBody()}",
+                                    "title": "@base64ToString(triggerOutputs()['headers']['x-ms-file-name-encoded'])"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['blogger']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/blogs/@{encodeURIComponent('33256684')}/posts",
+                                "queries": {
+                                    "isDraft": true
+                                }
+                            },
+                            "runAfter": {},
+                            "type": "ApiConnection"
+                        }
+                    }
+                },
+                "expression": {
+                    "and": [
+                        {
+                            "greater": [
+                                "@length(body('Posts_Matching_Title'))",
+                                0
+                            ]
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Posts_Matching_Title": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "If"
+            },
+            "Initialize_variable": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "titlePostToUpsert",
+                            "type": "string",
+                            "value": "@base64ToString(triggerOutputs()['headers']['x-ms-file-name-encoded'])"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "List_all_posts": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['blogger_1']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/blogs/@{encodeURIComponent('33256684')}/posts",
+                    "queries": {
+                        "status": "draft"
+                    }
+                },
+                "runAfter": {
+                    "Initialize_variable": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Posts_Matching_Title": {
+                "inputs": {
+                    "from": "@body('List_all_posts')?['items']",
+                    "where": "@equals(item()?['title'], variables('titlePostToUpsert'))"
+                },
+                "runAfter": {
+                    "List_all_posts": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Query"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_file_is_modified": {
+                "evaluatedRecurrence": {
+                    "frequency": "Day",
+                    "interval": 1
+                },
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['onedrive']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/datasets/default/triggers/onupdatedfilev2",
+                    "queries": {
+                        "folderId": "619FA53A89AD4D51!986977",
+                        "includeFileContent": true,
+                        "includeSubfolders": false,
+                        "inferContentType": true,
+                        "simulate": false
+                    }
+                },
+                "metadata": {
+                    "619FA53A89AD4D51!986977": "/Blog Entries"
+                },
+                "recurrence": {
+                    "frequency": "Day",
+                    "interval": 1
+                },
+                "type": "ApiConnection"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "blogger": {
+                    "connectionId": "/subscriptions/f2fb6486-8f7b-4f41-ac27-eadce71ad98d/resourceGroups/rg-personal-site/providers/Microsoft.Web/connections/blogger",
+                    "connectionName": "blogger",
+                    "id": "/subscriptions/f2fb6486-8f7b-4f41-ac27-eadce71ad98d/providers/Microsoft.Web/locations/eastus2/managedApis/blogger"
+                },
+                "blogger_1": {
+                    "connectionId": "/subscriptions/f2fb6486-8f7b-4f41-ac27-eadce71ad98d/resourceGroups/rg-personal-site/providers/Microsoft.Web/connections/blogger-1",
+                    "connectionName": "blogger-1",
+                    "id": "/subscriptions/f2fb6486-8f7b-4f41-ac27-eadce71ad98d/providers/Microsoft.Web/locations/eastus2/managedApis/blogger"
+                },
+                "onedrive": {
+                    "connectionId": "/subscriptions/f2fb6486-8f7b-4f41-ac27-eadce71ad98d/resourceGroups/rg-personal-site/providers/Microsoft.Web/connections/onedrive",
+                    "connectionName": "onedrive",
+                    "id": "/subscriptions/f2fb6486-8f7b-4f41-ac27-eadce71ad98d/providers/Microsoft.Web/locations/eastus2/managedApis/onedrive"
+                }
+            }
+        }
+    }
+}
